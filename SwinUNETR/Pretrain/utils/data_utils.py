@@ -12,38 +12,37 @@
 from monai.data import CacheDataset, DataLoader, Dataset, DistributedSampler, SmartCacheDataset, load_decathlon_datalist
 from monai.transforms import (
     AddChanneld,
-    AsChannelFirstd,
     Compose,
     CropForegroundd,
     LoadImaged,
-    NormalizeIntensityd,
     Orientationd,
-    RandCropByPosNegLabeld,
     RandSpatialCropSamplesd,
     ScaleIntensityRanged,
-    Spacingd,
     SpatialPadd,
     ToTensord,
+    Resized
 )
 
 
 def get_loader(args):
-    splits1 = "/dataset_LUNA16_0.json"
-    splits2 = "/dataset_TCIAcovid19_0.json"
-    splits3 = "/dataset_HNSCC_0.json"
-    splits4 = "/dataset_TCIAcolon_v2_0.json"
-    splits5 = "/dataset_LIDC_0.json"
+    #splits1 = "/dataset_LUNA16_0.json"
+    splits1 = "/dataset_COPDGene_nii.json"
+    #splits2 = "/dataset_TCIAcovid19_0.json"
+    #splits3 = "/dataset_HNSCC_0.json"
+    #splits4 = "/dataset_TCIAcolon_v2_0.json"
+    #splits5 = "/dataset_LIDC_0.json"
     list_dir = "./jsons"
     jsonlist1 = list_dir + splits1
-    jsonlist2 = list_dir + splits2
-    jsonlist3 = list_dir + splits3
-    jsonlist4 = list_dir + splits4
-    jsonlist5 = list_dir + splits5
-    datadir1 = "/dataset/dataset1"
-    datadir2 = "/dataset/dataset2"
-    datadir3 = "/dataset/dataset3"
-    datadir4 = "/dataset/dataset4"
-    datadir5 = "/dataset/dataset8"
+    #jsonlist2 = list_dir + splits2
+    #jsonlist3 = list_dir + splits3
+    #jsonlist4 = list_dir + splits4
+    #jsonlist5 = list_dir + splits5
+    datadir1 = ''
+    #datadir1 = "/dataset/dataset1"
+    #datadir2 = "/dataset/dataset2"
+    #datadir3 = "/dataset/dataset3"
+    #datadir4 = "/dataset/dataset4"
+    #datadir5 = "/dataset/dataset8"
     num_workers = 4
     datalist1 = load_decathlon_datalist(jsonlist1, False, "training", base_dir=datadir1)
     print("Dataset 1 LUNA16: number of data: {}".format(len(datalist1)))
@@ -51,6 +50,7 @@ def get_loader(args):
     for item in datalist1:
         item_dict = {"image": item["image"]}
         new_datalist1.append(item_dict)
+    """
     datalist2 = load_decathlon_datalist(jsonlist2, False, "training", base_dir=datadir2)
     print("Dataset 2 Covid 19: number of data: {}".format(len(datalist2)))
     datalist3 = load_decathlon_datalist(jsonlist3, False, "training", base_dir=datadir3)
@@ -66,6 +66,10 @@ def get_loader(args):
     vallist5 = load_decathlon_datalist(jsonlist5, False, "validation", base_dir=datadir5)
     datalist = new_datalist1 + datalist2 + datalist3 + datalist4 + datalist5
     val_files = vallist1 + vallist2 + vallist3 + vallist4 + vallist5
+    """
+    datalist = new_datalist1
+    vallist1 = load_decathlon_datalist(jsonlist1, False, "validation", base_dir=datadir1)
+    val_files = vallist1
     print("Dataset all training: number of data: {}".format(len(datalist)))
     print("Dataset all validation: number of data: {}".format(len(val_files)))
 
@@ -74,6 +78,7 @@ def get_loader(args):
             LoadImaged(keys=["image"]),
             AddChanneld(keys=["image"]),
             Orientationd(keys=["image"], axcodes="RAS"),
+            Resized(keys=["image"], spatial_size=[288, 288, 288]),
             ScaleIntensityRanged(
                 keys=["image"], a_min=args.a_min, a_max=args.a_max, b_min=args.b_min, b_max=args.b_max, clip=True
             ),
@@ -94,6 +99,7 @@ def get_loader(args):
             LoadImaged(keys=["image"]),
             AddChanneld(keys=["image"]),
             Orientationd(keys=["image"], axcodes="RAS"),
+            Resized(keys=["image"], spatial_size=[288, 288, 288]),
             ScaleIntensityRanged(
                 keys=["image"], a_min=args.a_min, a_max=args.a_max, b_min=args.b_min, b_max=args.b_max, clip=True
             ),
@@ -126,12 +132,12 @@ def get_loader(args):
         train_ds = Dataset(data=datalist, transform=train_transforms)
 
     if args.distributed:
-        train_sampler = DistributedSampler(dataset=train_ds, even_divisible=True, shuffle=True)
+        train_sampler = DistributedSampler(dataset=train_ds, even_divisible=True, shuffle=False)
     else:
         train_sampler = None
     train_loader = DataLoader(
-        train_ds, batch_size=args.batch_size, num_workers=num_workers, sampler=train_sampler, drop_last=True
-    )
+        train_ds, batch_size=args.batch_size, num_workers=num_workers, sampler=train_sampler, drop_last=True,
+        shuffle=False)
 
     val_ds = Dataset(data=val_files, transform=val_transforms)
     val_loader = DataLoader(val_ds, batch_size=args.batch_size, num_workers=num_workers, shuffle=False, drop_last=True)
