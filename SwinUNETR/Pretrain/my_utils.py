@@ -71,6 +71,7 @@ nii_files.remove('/ocean/projects/asc170022p/shared/Data/COPDGene/Images/24095R/
 nii_files.remove('/ocean/projects/asc170022p/shared/Data/COPDGene/Images/13485T/Phase-1/Isotropic/13485T_INSP_STD_HAR_COPD_BSpline_Iso1.0mm.nii.gz')
 nii_files.remove('/ocean/projects/asc170022p/shared/Data/COPDGene/Images/22856D/Phase-1/Isotropic/22856D_INSP_STD_BWH_COPD_BSpline_Iso1.0mm.nii.gz')
 nii_files.remove('/ocean/projects/asc170022p/shared/Data/COPDGene/Images/14457T/Phase-1/Isotropic/14457T_INSP_STD_NJC_COPD_BSpline_Iso1.0mm.nii.gz')
+nii_files.remove('/ocean/projects/asc170022p/shared/Data/COPDGene/Images/23152Y/Phase-1/Isotropic/23152Y_INSP_STD_HVA_COPD_BSpline_Iso1.0mm.nii.gz')
 
 # this line is temp for testing
 #nii_files = nii_files[7964:]

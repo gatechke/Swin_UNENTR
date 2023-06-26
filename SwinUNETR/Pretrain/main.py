@@ -151,7 +151,7 @@ def main():
         return np.mean(loss_val), np.mean(loss_val_recon), img_list
 
     parser = argparse.ArgumentParser(description="PyTorch Training")
-    parser.add_argument("--logdir", default="test", type=str, help="directory to save the tensorboard logs")
+    parser.add_argument("--logdir", default="debug", type=str, help="directory to save the tensorboard logs")
     parser.add_argument("--epochs", default=100, type=int, help="number of training epochs")
     parser.add_argument("--num_steps", default=100000, type=int, help="number of training iterations")
     parser.add_argument("--eval_num", default=2000, type=int, help="evaluation frequency")
